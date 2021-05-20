@@ -1,0 +1,7 @@
+{
+  "traffic": { "name": "traffic", "icon": "fa-shuttle-van" },
+  "entertainment": { "name": "entertainment", "icon": "fa-grin-beam" },
+  "home": { "name": "home", "icon": "fa-home" },
+  "food": { "name": "food", "icon": "fa-utensils" },
+  "other": { "name": "other", "icon": "fa-pen" }
+}
