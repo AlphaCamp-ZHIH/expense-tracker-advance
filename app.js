@@ -27,8 +27,8 @@ app.use(
     resave: false,
   })
 );
-app.use(passport.session());
 app.use(passport.initialize());
+app.use(passport.session());
 usePassport();
 
 app.use((req, res, next) => {
