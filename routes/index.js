@@ -10,4 +10,4 @@ router.use('/users',users);
 router.use('/records',authenticator,records);
 router.use('/',authenticator,home)
 
-module.exports= router
+module.exports= router;

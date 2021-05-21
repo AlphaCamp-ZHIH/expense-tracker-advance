@@ -15,6 +15,11 @@
 <body>
   <nav class="navbar navbar-light bg-dark mb-5 text-white">
     <a class="navbar-brand font-weight-bold  text-white" href="/">家庭記帳本</a>
+    {{#if isAuthenticated}}
+    <a href="/users/logout" class="btn btn-warning">logout</a>
+    {{else}}
+    <a href="/users/login" class="btn btn-warning">login</a>
+    {{/if}}
   </nav>
 {{{body}}}
 
