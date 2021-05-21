@@ -9,10 +9,11 @@ const filterDate = require("../../helper/helper").filterDate;
 
 //filter
 router.get("/filter", (req, res) => {
+  const userId = req.user._id;
   const category = req.query.category;
   const ym = req.query.ym;
   if (category && !ym) {
-    return Record.find({ category })
+    return Record.find({ category ,userId})
       .sort({ date: "asc" })
       .lean()
       .then((expenses) => {
@@ -21,23 +22,23 @@ router.get("/filter", (req, res) => {
           expenses,
           totalAmount,
           category_cht: category_cht[category],
-          title:category_cht[category],
+          title: category_cht[category],
         });
       });
   }
   if (ym && !category) {
-    return Record.find()
+    return Record.find({userId})
       .sort({ date: "asc" })
       .lean()
       .then((expenses) => {
         expenses = expenses.filter((expense) => {
           return expense.date.includes(ym);
         });
-        res.render("index", { expenses, ym ,title:ym});
+        res.render("index", { expenses, ym, title: ym });
       });
   }
   if (ym && category) {
-    return Record.find({ category })
+    return Record.find({ category, userId })
       .sort({ date: "asc" })
       .lean()
       .then((expenses) => {
@@ -55,16 +56,22 @@ router.get("/filter", (req, res) => {
 
 //編輯支出
 router.get("/:id/edit", (req, res) => {
+  const userId = req.user._id;
   const expenseId = req.params.id;
-  Record.findById(expenseId)
+  Record.findOne({ _id: expenseId, userId })
     .lean()
     .then((expense) => {
-      res.render("edit", { expense, ...whichCategory(expense.category),title:"編輯支出" });
+      res.render("edit", {
+        expense,
+        ...whichCategory(expense.category),
+        title: "編輯支出",
+      });
     });
 });
 
 router.put("/:id", (req, res) => {
   const expenseId = req.params.id;
+  const userId = req.user._id;
   const { name, category, amount, date, merchant } = req.body;
   if (!name || !category || !amount || !date) {
     return res.render("edit", {
@@ -74,13 +81,7 @@ router.put("/:id", (req, res) => {
     });
   }
 
-  Record.findById(expenseId)
-    .then((expense) => {
-      const props = Object.keys(req.body);
-      props.map((prop) => (expense[prop] = req.body[prop]));
-      expense.categoryIcon = Category[category].icon;
-      return expense.save();
-    })
+  Record.findOneAndUpdate({ _id: expenseId, userId }, req.body, { new: true })
     .then(() => res.redirect("/"))
     .catch((e) => console.log(e));
 });
@@ -91,6 +92,7 @@ router.get("/new", (req, res) => {
 });
 
 router.post("/", (req, res) => {
+  const userId = req.user._id;
   const { name, category, amount, date, merchant } = req.body;
   if (!name || !category || !amount || !date) {
     return res.render("new", {
@@ -106,18 +108,18 @@ router.post("/", (req, res) => {
     merchant,
     category: category,
     categoryIcon: Category[category].icon,
+    userId,
   })
     .then(() => res.redirect("/"))
     .catch((e) => console.log(e));
 });
 // 刪除支出
 router.delete("/:id", (req, res) => {
+  const userId = req.user._id;
   const expenseId = req.params.id;
-  Record.findById(expenseId)
-    .then((expense) => {
-      return expense.remove();
-    })
-    .then(() => res.redirect("/"));
+  Record.findOneAndDelete({ userId, _id: expenseId }).then(() =>
+    res.redirect("/")
+  );
 });
 
 module.exports = router;
