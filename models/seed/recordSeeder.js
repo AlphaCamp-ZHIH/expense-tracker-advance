@@ -1,35 +1,46 @@
 const Record = require("../record");
-const Category = require("../category");
+const Category = require("../category.json");
+const User = require("../user");
+const bcrypt = require("bcryptjs");
 const db = require("../../config/mongoose");
-const type = ["traffic",
-  "entertainment",
-  "home",
-  "food",
-  "other"]
-const randomNum = require('../../helper/helper').randomNum;
-
-
-db.once("open", () => {
-  const data = Array.from({ length: 9 }, (_, i) => {
-
-    return Category.findOne({ name: type[randomNum(type.length)] })
-      .lean()
-      .then(category => {
-
-        return Record.create({
+const type = ["traffic", "entertainment", "home", "food", "other"];
+const randomNum = require("../../helper/helper").randomNum;
+let i =0;
+// console.log(Category[type[randomNum(5)]].name)
+db.once("open", async () => {
+  const users = Array.from({ length: 3 }, (_, i) => {
+    return bcrypt
+      .genSalt(10)
+      .then((salt) => bcrypt.hash("12345678", salt))
+      .then((hash) =>
+        User.create({
           name: `name-${i}`,
-          date: `2021-0${randomNum(8)+1}-1${i}`,
-          category: category.name,
-          categoryIcon: category.icon,
-          amount: (i + 1) * 100,
-          merchant: `你家-${i}`,
+          email: `example-${i}@test.com`,
+          password: hash,
+        })
+      )
+      .then((user) => {
+        const userId = user._id;
+        const data = Array.from({ length: 9 }, (_, i) => {
+          const category = type[randomNum(5)];
+          return Record.create({
+            name: `name-${i}`,
+            date: `2021-0${randomNum(8) + 1}-1${i}`,
+            category: Category[category].name,
+            categoryIcon: Category[category].icon,
+            amount: (i + 1) * 100,
+            merchant: `你家-${i}`,
+            userId,
+          });
         });
+        return Promise.all(data);
       })
+      .then(()=>{
+        ++i;
+        console.log(`seed of user-${i}  finished`)
+      });
   });
-  Promise.all(data)
-    .then(() => {
-      console.log("generate record seed successfully");
-      process.exit();
-    })
-    .catch((error) => console.log(error));
+  await Promise.all(users);
+  db.close();
+  console.log('All seeds create  successfully')
 });
