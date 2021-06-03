@@ -25,7 +25,7 @@ db.once("open", async () => {
           const category = type[randomNum(5)];
           return Record.create({
             name: `name-${i}`,
-            date: `2021-0${randomNum(8) + 1}-1${i}`,
+            date: new Date(2021, randomNum(12)+1,randomNum(20)+1),
             category: Category[category].name,
             categoryIcon: Category[category].icon,
             amount: (i + 1) * 100,
