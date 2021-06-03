@@ -24,3 +24,8 @@ module.exports.filterDate = (expenses) =>{
     return expense.date.split('-').slice(0, 2).join("-")
   }).filter((date, i, arr) => arr.indexOf(date) === i)
 }
+module.exports.dateFormChange = (expense) => {
+  return `${expense.date.getFullYear()}-${
+    expense.date.getMonth() + 1
+  }-${expense.date.getDate()}`;
+};

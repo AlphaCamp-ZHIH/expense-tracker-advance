@@ -4,9 +4,9 @@ const router = require("./routes/index");
 const bodyParser = require("body-parser");
 const methodOverride = require("method-override");
 const session = require("express-session");
-const flash = require('connect-flash');
-const passport = require('passport');
-const usePassport = require('./config/passport');
+const flash = require("connect-flash");
+const passport = require("passport");
+const usePassport = require("./config/passport");
 const Record = require("./models/record");
 
 require("./config/mongoose");
@@ -35,21 +35,18 @@ app.use(passport.session());
 usePassport();
 
 app.use((req, res, next) => {
-  Record.find()
-    .sort({ date: "asc" })
-    .lean()
-    .then((expenses) => filterDate(expenses))
-    .then((yms) => {
-      res.locals.yms = yms;
-    })
-    .then(() => next());
-});
-app.use((req, res, next)=>{
-  res.locals.user= req.user;
+  const category = req.query.category;
+  res.locals.user = req.user;
   res.locals.isAuthenticated = req.isAuthenticated();
-  res.locals.success_msg = req.flash('success_msg');
-  res.locals.warning_msg = req.flash('warning_msg');
-  next();
+  res.locals.success_msg = req.flash("success_msg");
+  res.locals.warning_msg = req.flash("warning_msg");
+  const months = Array.from({ length: 12 }).map((month, i) => ({
+    month: i + 1,
+    category,
+  }));
+
+  res.locals.months = months;
+  return next();
 });
 
 app.use(router);

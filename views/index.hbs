@@ -5,11 +5,11 @@
       <div class="col-3 dropdown">
         <button class="btn btn-outline-dark dropdown-toggle w-100 pt-3 pb-3 mb-5 " type="button" id="dropdownMenuButton"
           data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          {{#if ym}} {{ym}} {{else}}年月{{/if}}
+          {{#if month}} {{month}}月 {{else}}月份{{/if}}
         </button>
         <div class="dropdown-menu w-100 " aria-labelledby="dropdownMenuButton">
-          {{#each yms}}
-          <a class="dropdown-item w-100 " href="/records/filter?ym={{this}}">{{this}}</a>
+          {{#each months}}
+          <a class="dropdown-item w-100 " href="/records/filter?month={{this.month}}{{#if this.category}}&&category={{this.category}}{{/if}}">{{this.month}}</a>
           {{/each}}
         </div>
       </div>
@@ -19,11 +19,11 @@
           {{#if category_cht}} {{category_cht}} {{else}}類別{{/if}}
         </button>
         <div class="dropdown-menu w-100 " aria-labelledby="dropdownMenuButton">
-          <a class="dropdown-item w-100" href="/records/filter?category=home{{#if ym}}&&ym={{ym}}{{/if}}">家居物業</a>
-          <a class="dropdown-item w-100" href="/records/filter?category=traffic{{#if ym}}&&ym={{ym}}{{/if}}">交通出行</a>
-          <a class="dropdown-item w-100" href="/records/filter?category=entertainment{{#if ym}}&&ym={{ym}}{{/if}}">休閒娛樂</a>
-          <a class="dropdown-item w-100" href="/records/filter?category=food{{#if ym}}&&ym={{ym}}{{/if}}">餐飲食品</a>
-          <a class="dropdown-item w-100" href="/records/filter?category=other{{#if ym}}&&ym={{ym}}{{/if}}">其他</a>
+          <a class="dropdown-item w-100" href="/records/filter?category=home{{#if month}}&&month={{month}}{{/if}}">家居物業</a>
+          <a class="dropdown-item w-100" href="/records/filter?category=traffic{{#if month}}&&month={{month}}{{/if}}">交通出行</a>
+          <a class="dropdown-item w-100" href="/records/filter?category=entertainment{{#if month}}&&month={{month}}{{/if}}">休閒娛樂</a>
+          <a class="dropdown-item w-100" href="/records/filter?category=food{{#if month}}&&month={{month}}{{/if}}">餐飲食品</a>
+          <a class="dropdown-item w-100" href="/records/filter?category=other{{#if month}}&&month={{month}}{{/if}}">其他</a>
 
         </div>
       </div>

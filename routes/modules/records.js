@@ -5,52 +5,67 @@ const router = express.Router();
 const whichCategory = require("../../helper/helper").whichCategory;
 const calculateTotalMount = require("../../helper/helper").calculateTotalMount;
 const category_cht = require("../../helper/helper").category_cht;
-const filterDate = require("../../helper/helper").filterDate;
+const dateFormChange = require("../../helper/helper").dateFormChange;
 
 //filter
 router.get("/filter", (req, res) => {
   const userId = req.user._id;
   const category = req.query.category;
-  const ym = req.query.ym;
-  if (category && !ym) {
-    return Record.find({ category ,userId})
-      .sort({ date: "asc" })
-      .lean()
+  const month = req.query.month;
+  if (month) {
+    return Record.find({
+      userId,
+      date: { $gte: `2021-${month}-1`, $lte: `2021-${month}-31` },
+    })
+    .sort({ date: "asc" })
+    .lean()
       .then((expenses) => {
-        const totalAmount = calculateTotalMount(expenses);
-        res.render("index", {
+        let totalAmount = calculateTotalMount(expenses);
+        expenses.forEach((expense) => {
+          expense.date = dateFormChange(expense);
+        });
+        if (category) {
+          expenses = expenses.filter(
+            (expense) => expense.category === category
+          );
+          totalAmount = calculateTotalMount(expenses);
+          return res.render("index", {
+            expenses,
+            totalAmount,
+            category_cht: category_cht[category],
+            title: category_cht[category],
+            month,
+          });
+        }
+        return res.render("index", {
           expenses,
           totalAmount,
           category_cht: category_cht[category],
           title: category_cht[category],
+          month,
         });
-      });
+      })
+      .catch((e) => console.log(e));
   }
-  if (ym && !category) {
-    return Record.find({userId})
+  if (category) {
+    return Record.find({ userId, category })
       .sort({ date: "asc" })
       .lean()
       .then((expenses) => {
-        expenses = expenses.filter((expense) => {
-          return expense.date.includes(ym);
+        expenses.forEach((expense) => {
+          expense.date = dateFormChange(expense);
         });
-        res.render("index", { expenses, ym, title: ym });
-      });
-  }
-  if (ym && category) {
-    return Record.find({ category, userId })
-      .sort({ date: "asc" })
-      .lean()
-      .then((expenses) => {
-        expenses = expenses.filter((expense) => {
-          return expense.date.includes(ym);
-        });
-        res.render("index", {
+        res.locals.a = category;
+        totalAmount = calculateTotalMount(expenses);
+        return res.render("index", {
           expenses,
-          ym,
-          title: ym + "-" + category_cht[category],
+          totalAmount,
+          category_cht: category_cht[category],
+          title: category_cht[category],
+          month,
         });
-      });
+      })
+      .catch((e) => console.log(e));
   }
 });
 

@@ -9,6 +9,10 @@ router.get("/", (req, res) => {
     .sort({ date: "asc" })
     .lean()
     .then((expenses) => {
+      expenses=expenses.map(expense =>{
+        expense.date = `${expense.date.getFullYear()}-${expense.date.getMonth()+1}-${expense.date.getDay()}`;
+        return expense;
+      });
       const totalAmount = calculateTotalMount(expenses);
       res.render("index", { expenses, totalAmount, title: "家庭記帳本" });
     });
