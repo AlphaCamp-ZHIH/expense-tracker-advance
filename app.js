@@ -9,6 +9,10 @@ const passport = require("passport");
 const usePassport = require("./config/passport");
 const Record = require("./models/record");
 
+if (process.env.NODE_ENV !== "production") {
+  require("dotenv").config();
+}
+
 require("./config/mongoose");
 const filterDate = require("./helper/helper").filterDate;
 const app = express();
