@@ -10,22 +10,30 @@ module.exports.whichCategory = (category) => {
   if (category === "other") return { isOther: true };
 };
 module.exports.category_cht = {
-  home:"家居物業",
-  traffic:"交通出行",
-  entertainment:"休閒娛樂",
-  food:"餐飲食品",
-  other:"其他"
+  home: "家居物業",
+  traffic: "交通出行",
+  entertainment: "休閒娛樂",
+  food: "餐飲食品",
+  other: "其他",
 };
 module.exports.randomNum = (length) => {
-  return Math.floor(Math.random() * length)
+  return Math.floor(Math.random() * length);
 };
-module.exports.filterDate = (expenses) =>{
- return  expenses.map(expense => {
-    return expense.date.split('-').slice(0, 2).join("-")
-  }).filter((date, i, arr) => arr.indexOf(date) === i)
-}
+module.exports.filterDate = (expenses) => {
+  return expenses
+    .map((expense) => {
+      return expense.date.split("-").slice(0, 2).join("-");
+    })
+    .filter((date, i, arr) => arr.indexOf(date) === i);
+};
 module.exports.dateFormChange = (expense) => {
-  return `${expense.date.getFullYear()}-${
-    expense.date.getMonth() + 1
-  }-${expense.date.getDate()}`;
+  let month =
+    expense.date.getMonth() + 1 < 10
+      ? "0" + (expense.date.getMonth() + 1).toString()
+      : expense.date.getMonth() + 1;
+  let day =
+    expense.date.getDate() + 1 < 10
+      ? "0" + (expense.date.getDate()).toString()
+      : expense.date.getDate();
+  return `${expense.date.getFullYear()}-${month}-${day}`;
 };

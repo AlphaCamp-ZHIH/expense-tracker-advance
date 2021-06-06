@@ -1,6 +1,7 @@
 const express = require("express");
 const Record = require("../../models/record");
 const calculateTotalMount = require("../../helper/helper").calculateTotalMount;
+const dateFormChange = require("../../helper/helper").dateFormChange;
 const router = express.Router();
 
 router.get("/", (req, res) => {
@@ -9,8 +10,8 @@ router.get("/", (req, res) => {
     .sort({ date: "asc" })
     .lean()
     .then((expenses) => {
-      expenses=expenses.map(expense =>{
-        expense.date = `${expense.date.getFullYear()}-${expense.date.getMonth()+1}-${expense.date.getDay()}`;
+      expenses = expenses.map((expense) => {
+        expense.date = dateFormChange(expense);
         return expense;
       });
       const totalAmount = calculateTotalMount(expenses);

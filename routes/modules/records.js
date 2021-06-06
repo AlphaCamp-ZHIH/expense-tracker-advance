@@ -76,6 +76,7 @@ router.get("/:id/edit", (req, res) => {
   Record.findOne({ _id: expenseId, userId })
     .lean()
     .then((expense) => {
+      expense.date = dateFormChange(expense);
       res.render("edit", {
         expense,
         ...whichCategory(expense.category),
@@ -95,7 +96,6 @@ router.put("/:id", (req, res) => {
       wrongMsg: "請填寫必填欄位",
     });
   }
-
   Record.findOneAndUpdate({ _id: expenseId, userId }, req.body, { new: true })
     .then(() => res.redirect("/"))
     .catch((e) => console.log(e));
